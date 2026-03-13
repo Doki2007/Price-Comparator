@@ -1,0 +1,172 @@
+  1. Tabla de Conceptos y Fuentes de Estudio
+
+  Esta tabla resume los pilares de lo que estamos construyendo. Te recomiendo leerlos en este orden:
+
+
+
+  ┌──────────────────────────┬──────────────────────────────────────────────────────┬────────────────────────────────────────────────────────────────────────────────────┐
+  │ Tema                     │ ¿Qué aprenderás?                                     │ Fuente Recomendada                                                                 │
+  ├──────────────────────────┼──────────────────────────────────────────────────────┼────────────────────────────────────────────────────────────────────────────────────┤
+  │ ETL (Extract, Transform, │ Cómo mover datos de un sitio a otro de forma limpia. │ Wikipedia - ETL (https://es.wikipedia.org/wiki/Extract,_transform_and_load)        │
+  │ Load)                    │                                                      │                                                                                    │
+  │ Asincronía (Async/Await) │ Cómo hacer 100 cosas a la vez sin que el programa se │ Real Python - Async IO (https://realpython.com/async-io-python/)                   │
+  │                          │ congele.                                             │                                                                                    │
+  │ Patrón Strategy (OOP)    │ Cómo crear una "plantilla" base y reusarla para      │ Refactoring Guru - Strategy (https://refactoring.guru/es/design-patterns/strategy) │
+  │                          │ Metro, Wong, etc.                                    │                                                                                    │
+  │ Normalización de DB      │ Por qué dividimos productos y precios (Relaciones 1  │ Lucidchart - Normalización                                                         │
+  │                          │ a N).                                                │ (https://www.lucidchart.com/pages/es/normalizacion-de-base-de-datos)               │
+  │ REST APIs & JSON         │ Cómo se comunican el Backend y el Frontend           │ MDN Web Docs - HTTP (https://developer.mozilla.org/es/docs/Web/HTTP/Overview)      │
+  │                          │ profesionalmente.                                    │                                                                                    │
+  │ FastAPI                  │ El framework que usaremos (rápido, moderno y fácil). │ FastAPI Official Docs (https://fastapi.tiangolo.com/es/)                           │
+  └──────────────────────────┴──────────────────────────────────────────────────────┴────────────────────────────────────────────────────────────────────────────────────┘
+
+  ---
+
+  2. ¿Qué es un agents.md?
+
+
+  El archivo agents.md no es un estándar antiguo de la informática (como el README.md), sino una buena práctica moderna surgida con las herramientas de IA (como Gemini CLI, Cursor 
+  o Claude Code).
+
+  Su objetivo es darle a la IA un "Manual de Identidad" del proyecto para que no cometa errores y siga tus reglas siempre.
+
+
+  ¿Dónde buscar información?
+  No lo encontrarás en Wikipedia todavía. Se basa en el concepto de "Prompt Engineering for Codebases". Es básicamente un archivo de instrucciones persistentes.
+
+
+  Estructura sugerida para TU agents.md
+  Puedes copiar este contenido y pegarlo en un archivo nuevo llamado agents.md en la raíz de tu proyecto:
+
+
+    1 # Contexto del Proyecto: Comparador de Precios
+    2
+    3 ## 🎯 Objetivo
+    4 Un sistema Fullstack para monitorear precios de supermercados peruanos (Metro, Wong, Plaza Vea, Tottus), guardar su historial y permitir que el usuario encuentre la mejor    
+      oferta.
+    5
+    6 ## 🛠️ Stack Tecnológico
+    7 - **Backend:** Python 3.12+, SQLite, FastAPI, HTTPX.
+    8 - **Frontend:** [Aquí pondrás el tuyo, ej: React + TypeScript].
+    9 - **Arquitectura:** Monorepo con carpetas `/backend` y `/frontend`.
+   10
+   11 ## 🧠 Reglas para el Agente (IA)
+   12 1. **Patrones:** Los scrapers DEBEN usar la clase base `VtexScraper` siempre que sea posible para evitar repetición de código.
+   13 2. **Base de Datos:** No borrar datos viejos. Siempre insertar precios nuevos en `historial_precios` para mantener el gráfico de evolución.
+   14 3. **Validación:** Antes de guardar un producto, verificar que el precio sea mayor a 0.
+   15 4. **Skills:** Usa las skills en `.agent/skills/` para tareas de optimización de SQL y limpieza de código.
+   16
+   17 ## 📁 Estructura de Archivos
+   18 - `backend/scrapers.py`: Motores de extracción.
+   19 - `backend/database.py`: Lógica de persistencia.
+   20 - `backend/main.py`: Orquestador de tareas diarias.
+
+  ---
+
+  Mi consejo Senior para el Síndrome del Impostor:
+
+
+  No intentes aprenderte cada línea de memoria. El secreto de un Senior es:
+   1. Saber que existe una solución (ej: "Sé que existe algo llamado Async para que esto sea rápido").
+   2. Saber leer la documentación para implementarlo.
+   3. Entender el flujo del dato: El dato nace en la web del súper -> Pasa por tu código (limpieza) -> Se guarda en el disco (DB) -> Se entrega por la API -> Se dibuja en tu       
+      Frontend.
+
+
+  Si entiendes esa "carretera" por la que viaja el dato, ya sabes más que el 70% de los programadores junior.
+
+
+  ¿Te parece si cuando termines de organizar tus carpetas y crear tu agents.md, empezamos con la API en FastAPI? Ahí es donde verás la magia de conectar tu Backend con el mundo    
+  exterior.
+
+
+
+
+
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Es una excelente mentalidad. El síndrome del impostor es normal, especialmente cuando usas IA para acelerar el desarrollo. La mejor forma de combatirlo es 
+  exactamente lo que estás pidiendo: entender el "por qué" detrás del código, no solo el "cómo".
+
+
+  Aquí tienes mi guía como Senior para estructurar tu proyecto y los conceptos clave que debes estudiar para dominar lo que acabamos de construir.
+
+  ---
+
+  1. Sugerencia de Estructura (Monorepo)
+
+  Para mantener todo ordenado, te sugiero esta estructura cuando muevas las carpetas:
+
+
+    1 compare-prices-db/
+    2 ├── backend/                  # Todo lo de Python va aquí
+    3 │   ├── scrapers.py           # Motores de búsqueda
+    4 │   ├── database.py           # Conexión a SQLite
+    5 │   ├── main.py               # Orquestador (el que llenará la DB diariamente)
+    6 │   ├── api.py                # (Pronto) Servidor FastAPI
+    7 │   └── requirements.txt      # httpx, fastapi, etc.
+    8 ├── frontend/                 # Tu futuro código React/Vue/Angular
+    9 │   ├── src/
+   10 │   ├── package.json
+   11 │   └── ...
+   12 ├── .agent/
+   13 │   └── skills/               # Si tienes configuraciones específicas de IA
+   14 └── agents.md                 # El "cerebro" del proyecto para la IA
+
+
+  ¿Qué poner en agents.md?
+  Este archivo debe ser tu Manifiesto. Deberías incluir:
+   1. El Stack: (Backend: Python, SQLite, FastAPI / Frontend: [Tu framework]).
+   2. El Objetivo: "Un comparador de precios que raspea supermercados peruanos".
+   3. Reglas Arquitectónicas: Por ejemplo: "El scraper usa el patrón Strategy", "El frontend nunca toca la base de datos directamente, usa la API".
+
+  ---
+
+  2. Conceptos Teóricos del Backend que debes entender
+
+  No necesitas escribir el código de cero para aprender. Leer código bien estructurado es como leer buena literatura. Aquí tienes los pilares de lo que hemos  construido:
+
+
+  A. Arquitectura ETL (Extract, Transform, Load)
+  Todo proyecto de datos se basa en esto.
+   * Extract: Sacar datos crudos de las APIs de Metro/Wong (lo que hace httpx.get).
+   * Transform: Limpiar los precios, reconstruir links, quitar datos basura (lo que hace nuestra función normalizar()).
+   * Load: Guardar esos datos limpios en la base de datos (guardar_productos_completo()).
+
+
+  B. Concurrencia y Asincronía (asyncio)
+  En el código antiguo, hacías peticiones síncronas (bloqueantes). Es decir: "Ve a Metro. Espera. Cuando termines, ve a Wong".
+   * Lo que debes estudiar: Entender cómo funciona el Event Loop en Python. La asincronía (async/await) permite decir: "Ve a Metro, Wong y Plaza Vea al mismo     tiempo. Avísame cuando todos terminen". Esto reduce el tiempo de scraping de minutos a segundos.
+
+
+  C. Patrones de Diseño: "Patrón Strategy" (Estrategia)
+  Observa cómo en scrapers.py creamos una clase base VtexScraper y luego clases pequeñitas (MetroScraper, WongScraper).
+   * Lo que debes estudiar: OOP (Programación Orientada a Objetos) y el Principio DRY (Don't Repeat Yourself). El patrón estrategia nos permite tener un solo     motor (el de VTEX) y aplicarlo a diferentes "estrategias" (tiendas) solo cambiando pequeñas variables como la URL.
+
+
+  D. Normalización de Bases de Datos
+  ¿Por qué separamos productos de historial_precios?
+   * Lo que debes estudiar: Formas Normales de Bases de Datos Relacionales. Si guardáramos el precio en la tabla principal, cada vez que el precio cambia    
+     perderíamos el anterior. Al separarlo (Relación 1 a Muchos), el "Producto" vive para siempre, y su "Historial" va creciendo cada día.
+
+  ---
+
+  3. ¿Dónde y cómo estudiar esto?
+
+
+  Si tu foco principal será el Frontend, no te agobies tratando de ser un experto en bases de datos, pero sí comprende la lógica.
+
+
+  Mejores fuentes para investigar (Nivel Intermedio/Avanzado):
+   1. Real Python (realpython.com): Busca allí "Python Asyncio" y "Python Object Oriented Programming". Tienen los mejores artículos explicativos de
+      internet, mucho mejor que un video genérico de YouTube.
+   2. FastAPI Docs (fastapi.tiangolo.com): Cuando hagamos la API, vas a alucinar. La documentación oficial de FastAPI es considerada una de las mejores de la      industria del software. Te enseña backend moderno mientras lees el manual.
+   3. Refactoring Guru (refactoring.guru): Busca el "Strategy Pattern" aquí. Tienen ilustraciones visuales de cómo funcionan los patrones de diseño, ideal si      eres más visual (como suele pasar con los devs de Frontend).
+
+
+  Un consejo sobre el Síndrome del Impostor con IA:
+  No sientas que "no lo estás haciendo tú". Los desarrolladores Senior hoy en día actuamos como Directores de Orquesta. Tu trabajo es entender la
+  arquitectura, tomar decisiones críticas (como separar las tablas en la DB) y saber qué pedirle a la herramienta.
+
+
+  Tómate tu tiempo para reestructurar las carpetas, crea tu agents.md con las reglas del proyecto, y cuando estés listo, seguimos con la API (que será el    
+  puente perfecto hacia tu zona de confort: el Frontend).
