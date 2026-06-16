@@ -18,7 +18,7 @@ def obtener_datos_crudos(busqueda):
     # Parámetros SOLO de paginación (ya no enviamos 'ft' ni 'sc')
     params = {
         "_from": "0",
-        "_to": "49"
+        "_to": "4"
     }
 
     # Headers estándar (sin cookies complejas por ahora, a ver si pasa)

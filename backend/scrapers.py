@@ -1,3 +1,4 @@
+# pyrefly: ignore [missing-import]
 import httpx
 import asyncio
 from abc import ABC, abstractmethod
@@ -25,7 +26,7 @@ class VtexScraper(BaseScraper):
         url = f"{self.base_url}/api/catalog_system/pub/products/search/{producto_encoded}"
         
         # Mezclamos los parámetros base con los específicos de la tienda
-        params = {"_from": "0", "_to": "49"}
+        params = {"_from": "0", "_to": "4"}
         params.update(self.custom_params)
         
         async with httpx.AsyncClient(headers=self.headers, timeout=15.0, follow_redirects=True) as client:
@@ -33,10 +34,10 @@ class VtexScraper(BaseScraper):
                 response = await client.get(url, params=params)
                 if response.status_code in [200, 206]:
                     return self.normalizar(response.json())
-                print(f"⚠️ {self.tienda_nombre} respondió {response.status_code}")
+                print(f"[WARNING] {self.tienda_nombre} respondio {response.status_code}")
                 return []
             except Exception as e:
-                print(f"❌ Error en {self.tienda_nombre}: {e}")
+                print(f"[ERROR] Error en {self.tienda_nombre}: {e}")
                 return []
 
     def normalizar(self, data):
@@ -59,12 +60,12 @@ class VtexScraper(BaseScraper):
 
                 productos_limpios.append({
                     "id": f"{self.tienda_nombre}-{item['productId']}",
-                    "nombre": item['productName'],
-                    "marca": item['brand'],
-                    "tienda": self.tienda_nombre,
-                    "precio": precio_actual,
-                    "precio_lista": oferta.get('ListPrice', precio_actual),
-                    "imagen": sku_item['images'][0]['imageUrl'] if sku_item['images'] else "",
+                    "name": item['productName'],
+                    "brand": item['brand'],
+                    "store": self.tienda_nombre,
+                    "price": precio_actual,
+                    "list_price": oferta.get('ListPrice', precio_actual),
+                    "image": sku_item['images'][0]['imageUrl'] if sku_item['images'] else "",
                     "link": link
                 })
             except: continue
@@ -82,3 +83,11 @@ class WongScraper(VtexScraper):
 class PlazaVeaScraper(VtexScraper):
     def __init__(self):
         super().__init__("Plaza Vea", "https://www.plazavea.com.pe")
+
+# Registro principal de Scrapers. 
+# Para agregar una nueva tienda, simplemente añádela a esta lista.
+SCRAPERS_REGISTRY = [
+    MetroScraper,
+    WongScraper,
+    PlazaVeaScraper
+]

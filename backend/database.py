@@ -9,32 +9,32 @@ def iniciar_db():
     
     # Tabla principal de productos (datos únicos)
     cursor.execute("""
-        CREATE TABLE IF NOT EXISTS productos (
+        CREATE TABLE IF NOT EXISTS products (
             sku TEXT PRIMARY KEY,
-            nombre TEXT NOT NULL,
-            marca TEXT,
-            tienda TEXT NOT NULL,
-            imagen TEXT,
+            name TEXT NOT NULL,
+            brand TEXT,
+            store TEXT NOT NULL,
+            image TEXT,
             link TEXT,
-            categoria TEXT,
+            category TEXT,
             last_updated TIMESTAMP
         )
     """)
 
     # Tabla de historial de precios
     cursor.execute("""
-        CREATE TABLE IF NOT EXISTS historial_precios (
+        CREATE TABLE IF NOT EXISTS price_histories (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             sku TEXT NOT NULL,
-            precio REAL NOT NULL,
-            precio_lista REAL,
-            fecha TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            FOREIGN KEY (sku) REFERENCES productos (sku)
+            price REAL NOT NULL,
+            list_price REAL,
+            date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (sku) REFERENCES products (sku)
         )
     """)
     
     # Índice para búsquedas rápidas por nombre
-    cursor.execute("CREATE INDEX IF NOT EXISTS idx_nombre_prod ON productos(nombre)")
+    cursor.execute("CREATE INDEX IF NOT EXISTS idx_nombre_prod ON products(name)")
     
     conn.commit()
     conn.close()
@@ -53,23 +53,56 @@ def guardar_productos_completo(productos_limpios):
         for p in productos_limpios:
             # 1. UPSERT en productos
             cursor.execute("""
-                INSERT INTO productos (sku, nombre, marca, tienda, imagen, link, last_updated)
-                VALUES (?, ?, ?, ?, ?, ?, ?)
+                INSERT INTO products (sku, name, brand, store, image, link, category, last_updated)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
                 ON CONFLICT(sku) DO UPDATE SET
-                    nombre=excluded.nombre,
-                    imagen=excluded.imagen,
+                    name=excluded.name,
+                    image=excluded.image,
                     last_updated=excluded.last_updated
-            """, (p['id'], p['nombre'], p['marca'], p['tienda'], p['imagen'], p['link'], now))
+            """, (p['id'], p['name'], p['brand'], p['store'], p['image'], p['link'], p.get('category'), now))
 
             # 2. Insertar en historial siempre (o podrías validar si el precio cambió)
             cursor.execute("""
-                INSERT INTO historial_precios (sku, precio, precio_lista, fecha)
+                INSERT INTO price_histories (sku, price, list_price, date)
                 VALUES (?, ?, ?, ?)
-            """, (p['id'], p['precio'], p['precio_lista'], now))
+            """, (p['id'], p['price'], p['list_price'], now))
             
         conn.commit()
     except Exception as e:
-        print(f"❌ Error masivo en DB: {e}")
+        print(f"[ERROR] Error masivo en DB: {e}")
         conn.rollback()
     finally:
         conn.close()
+
+def obtener_historial_precios(sku: str) -> list:
+    conn = sqlite3.connect(DB_NAME)
+    conn.row_factory = sqlite3.Row
+    cursor = conn.cursor()
+    
+    cursor.execute("""
+        SELECT id, sku, price, list_price, date
+        FROM price_histories
+        WHERE sku = ?
+        ORDER BY date DESC
+    """, (sku,))
+    
+    filas = cursor.fetchall()
+    conn.close()
+    
+    return [dict(fila) for fila in filas]
+
+def obtener_producto(sku: str) -> dict:
+    conn = sqlite3.connect(DB_NAME)
+    conn.row_factory = sqlite3.Row
+    cursor = conn.cursor()
+    
+    cursor.execute("""
+        SELECT sku as id, name, brand, store, image, link, category, last_updated
+        FROM products
+        WHERE sku = ?
+    """, (sku,))
+    
+    fila = cursor.fetchone()
+    conn.close()
+    
+    return dict(fila) if fila else None

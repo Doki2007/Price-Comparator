@@ -1,35 +1,33 @@
-import asyncio
+# pyrefly: ignore [missing-import]
+from fastapi import FastAPI
+# pyrefly: ignore [missing-import]
+from fastapi.middleware.cors import CORSMiddleware
+from api.router import router as api_router
 import database
-from scrapers import MetroScraper, WongScraper, PlazaVeaScraper
 
-async def buscar_en_todas_las_tiendas(termino):
-    # Inicializamos los scrapers
-    tiendas = [
-        MetroScraper(),
-        WongScraper(),
-        PlazaVeaScraper()
-    ]
-    
-    print(f"🔍 Buscando '{termino}' en {len(tiendas)} tiendas simultáneamente...")
-    
-    # Lanzamos todas las búsquedas en paralelo 🚀
-    tareas = [t.buscar(termino) for t in tiendas]
-    resultados = await asyncio.gather(*tareas)
-    
-    # Aplanamos la lista de listas
-    todos_los_productos = [p for sublista in resultados for p in sublista]
-    
-    if todos_los_productos:
-        print(f"✅ Se encontraron {len(todos_los_productos)} productos en total.")
-        database.guardar_productos_completo(todos_los_productos)
-        print("💾 Base de datos actualizada con historial.")
-    else:
-        print("⚠️ No se encontraron productos.")
+# Aseguramos que la DB existe al iniciar la aplicación
+database.iniciar_db()
+
+app = FastAPI(
+    title="Compare Prices Core API", 
+    description="API for scraping and comparing prices across different supermarkets.",
+    version="1.0.0"
+)
+
+# Configuración CORS para permitir peticiones desde el Frontend (Astro/React)
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"], # For development, it allows all. In production, this should be specific.
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# Incluimos el router de la API
+app.include_router(api_router, prefix="/api/v1")
 
 if __name__ == "__main__":
-    # Aseguramos que la DB existe
-    database.iniciar_db()
-    
-    # Ejemplo de uso
-    termino_busqueda = "leche gloria"
-    asyncio.run(buscar_en_todas_las_tiendas(termino_busqueda))
+    # pyrefly: ignore [missing-import]
+    import uvicorn
+    # Lanzamos el servidor de forma programática para facilitar el desarrollo
+    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
