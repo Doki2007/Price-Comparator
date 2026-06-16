@@ -13,7 +13,7 @@ export const useFetchApi = () => {
 
     try {
       const response = await fetch(
-        `http://localhost:8000/api/v1/search?q=${encodeURIComponent(query)}`,
+        `https://price-comparator-3f04.onrender.com/api/v1/search?q=${encodeURIComponent(query)}`,
       );
 
       if (!response.ok) throw new Error("Error al obtener los productos");
