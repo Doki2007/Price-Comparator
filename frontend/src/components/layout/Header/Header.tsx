@@ -1,12 +1,7 @@
 import { HeaderProps } from "./Header.types";
 
-export const Header = ({
-  view,
-  setView,
-  searchQuery,
-  setSearchQuery,
-  onSearch,
-}: HeaderProps) => {
+export const Header = ({ view, setView, searchQuery, setSearchQuery, onSearch }: HeaderProps) => {
+  
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     onSearch(searchQuery);
