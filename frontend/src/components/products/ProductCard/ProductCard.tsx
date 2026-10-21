@@ -1,6 +1,6 @@
 import { ProductCardProps } from "./ProductCard.types";
 
-export const ProductCard = ({ view, product }: ProductCardProps) => {
+export const ProductCard = ({ view, product, isBestPrice }: ProductCardProps) => {
   const storeConfig = {
     "Plaza Vea": { bg: "bg-yellow-400", text: "text-charcoal" },
     Metro: { bg: "bg-red-600", text: "text-white" },
@@ -30,7 +30,7 @@ export const ProductCard = ({ view, product }: ProductCardProps) => {
         </div>
 
         {/* Etiqueta de Mejor Precio condicional */}
-        {product.isBestPrice && (
+        {isBestPrice && (
           <div className="absolute top-3 right-3 bg-turquoise text-brown font-bold text-[10px] px-2 py-1 rounded-full shadow-lg animate-pulse-subtle border border-brown/10">
             MEJOR PRECIO
           </div>
