@@ -76,7 +76,6 @@ function App() {
   const filteredProducts = products.filter( product => 
     activeStores.includes(product.store)
   ).sort((a,b)=> Number(a.price) - Number(b.price));
-  console.log(filteredProducts);
 
   const lowestPrice = Math.min(...filteredProducts.map(p => Number(p.price)))
   
