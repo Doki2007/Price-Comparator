@@ -33,10 +33,17 @@ export const useFetchApi = () => {
     const cachedItem = cache.current.get(queryKey);
 
     if(cachedItem) {
-      console.log('CACHE HIT: CARGANDO EN MEMORIA', queryKey);
-      setProducts(cachedItem.data);
-      setIsLoading(false);
-      return;
+      const isCacheExpired = Date.now() - cachedItem.timestamp;
+
+      if (isCacheExpired < CACHE_TTL){
+        console.log('Cache hit: Datos validos');
+        setProducts(cachedItem.data);
+        setIsLoading(false);
+        return;
+      } else {
+        console.log('Cache expirado. Borrando entrada...');
+        cache.current.delete(queryKey);
+      }
     }
 
     console.log("🔴 CACHE MISS: Yendo a la API por", queryKey);
