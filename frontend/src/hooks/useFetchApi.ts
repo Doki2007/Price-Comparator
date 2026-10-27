@@ -1,5 +1,5 @@
 import { useState, useRef } from "react";
-import { BackendSearchResponse, Product } from "../types/types";
+import { BackendSearchResponse, CacheEntry, Product } from "../types/types";
 
 export const useFetchApi = () => {
   const [searchQuery, setSearchQuery] = useState<string>("");
@@ -8,9 +8,11 @@ export const useFetchApi = () => {
   const [isError, setIsError] = useState<string | null>(null);
 
   const abortControllerRef = useRef<AbortController | null>(null);
-
+  //4. Consultar cache;
+  const cache = useRef<Map<string, CacheEntry<Product[]>>>(new Map());
 
   const getProducts = async (query: string) => {
+      
 
     // 1. Matamos cualquier petición anterior ANTES de crear la nueva
     if (abortControllerRef.current) {
@@ -23,6 +25,21 @@ export const useFetchApi = () => {
     abortControllerRef.current = controller;
 
     // 3. Empezamos el estado visual
+    setIsLoading(true);
+    setIsError(null);
+
+    const CACHE_TTL = 43200000;
+    const queryKey = query.trim().toLowerCase(); //limpiamos la busqueda
+    const cachedItem = cache.current.get(queryKey);
+
+    if(cachedItem) {
+      console.log('CACHE HIT: CARGANDO EN MEMORIA', queryKey);
+      setProducts(cachedItem.data);
+      setIsLoading(false);
+      return;
+    }
+
+    console.log("🔴 CACHE MISS: Yendo a la API por", queryKey);
     setIsLoading(true);
     setIsError(null);
 
@@ -45,6 +62,13 @@ export const useFetchApi = () => {
         imageUrl: item.image || "",
         link: item.link || "",
       }));
+
+      cache.current.set(queryKey, {
+        data: mappedProducts,
+        timestamp: Date.now(),
+      });
+
+
       setProducts(mappedProducts);
       setIsLoading(false);// Apagamos aqi el loading para que siempre se vea el Skeleton
 

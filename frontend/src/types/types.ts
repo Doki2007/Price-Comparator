@@ -34,3 +34,8 @@ export interface FilterContextType{
   activeStores: Store[];
   setActiveStores: React.Dispatch<React.SetStateAction<Store[]>>;
 }
+
+export interface CacheEntry<T>{
+  data: T;
+  timestamp: number;
+}
