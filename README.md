@@ -147,7 +147,7 @@ compare-prices/
 - [ ] Price history charts per product (line graph over time)
 - [ ] GSAP scroll animations and premium micro-interactions
 - [ ] Dark mode toggle
-- [ ] Add more stores (Tottus, Vivanda)
+- [ ] Add more stores (Tottus, Vivanda, etc...)
 - [ ] User-Agent rotation and anti-ban header strategies
 - [ ] Sorting options (price asc/desc, store, relevance)
 - [ ] Mobile-optimized responsive design refinements
